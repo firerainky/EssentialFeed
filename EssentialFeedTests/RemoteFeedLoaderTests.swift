@@ -77,15 +77,6 @@ class RemoteFeedLoaderTests: XCTestCase {
         XCTAssertEqual(client.requestedURLs.count, 7)
     }
     
-    func test_makeDataWithJson() {
-        var data = Data("A invalid json".utf8)
-        var json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
-        XCTAssertNil(json)
-        data = Data("{\"items\": []}".utf8)
-        json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
-        XCTAssertNotNil(json)
-    }
-    
     
     // MARK: Test Helpers
     
