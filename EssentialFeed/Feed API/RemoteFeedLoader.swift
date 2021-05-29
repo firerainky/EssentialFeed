@@ -12,13 +12,13 @@ import Foundation
 //    case error(Error)
 //}
 
-public enum HTTPResult {
-    case success(HTTPURLResponse)
+public enum HTTPClientResult {
+    case success(response: HTTPURLResponse, data: Data)
     case failure(Swift.Error)
 }
 
 public protocol HTTPClient {
-    func get(from: URL, completion: @escaping (HTTPResult) -> Void)
+    func get(from: URL, completion: @escaping (HTTPClientResult) -> Void)
 }
 
 public class RemoteFeedLoader {
@@ -39,7 +39,7 @@ public class RemoteFeedLoader {
     public func load(completion: @escaping (Error) -> Void) {
         client.get(from: url) { result in
             switch result {
-            case .success(_):
+            case .success(_, _):
                 completion(.invalidData)
             case .failure(_):
                 completion(.connectivity)
