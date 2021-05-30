@@ -7,11 +7,6 @@
 
 import Foundation
 
-//public enum DataResult {
-//    case success(Data)
-//    case error(Error)
-//}
-
 public enum HTTPClientResult {
     case success(data: Data, response: HTTPURLResponse)
     case failure(Swift.Error)
