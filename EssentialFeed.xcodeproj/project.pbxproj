@@ -13,6 +13,7 @@
 		38E6B875265E2F3700548514 /* FeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E6B874265E2F3700548514 /* FeedLoader.swift */; };
 		38E6B878265E6B8700548514 /* RemoteFeedLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E6B877265E6B8700548514 /* RemoteFeedLoaderTests.swift */; };
 		38E6B87B265F83E200548514 /* RemoteFeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E6B87A265F83E200548514 /* RemoteFeedLoader.swift */; };
+		38E6B87D2663B76600548514 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E6B87C2663B76600548514 /* HTTPClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,7 @@
 		38E6B874265E2F3700548514 /* FeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoader.swift; sourceTree = "<group>"; };
 		38E6B877265E6B8700548514 /* RemoteFeedLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoaderTests.swift; sourceTree = "<group>"; };
 		38E6B87A265F83E200548514 /* RemoteFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoader.swift; sourceTree = "<group>"; };
+		38E6B87C2663B76600548514 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPClient.swift; path = EssentialFeed/HTTPClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 		38E6B84E265E2E9B00548514 = {
 			isa = PBXGroup;
 			children = (
+				38E6B87C2663B76600548514 /* HTTPClient.swift */,
 				38E6B85A265E2E9B00548514 /* EssentialFeed */,
 				38E6B865265E2E9B00548514 /* EssentialFeedTests */,
 				38E6B859265E2E9B00548514 /* Products */,
@@ -222,6 +225,7 @@
 			files = (
 				38E6B875265E2F3700548514 /* FeedLoader.swift in Sources */,
 				38E6B87B265F83E200548514 /* RemoteFeedLoader.swift in Sources */,
+				38E6B87D2663B76600548514 /* HTTPClient.swift in Sources */,
 				38E6B873265E2EEC00548514 /* FeedItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
