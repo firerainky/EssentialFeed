@@ -51,8 +51,6 @@ public class RemoteFeedLoader {
             }
         }
     }
-    
-    
 }
 
 private struct FeedItemsMapper {
