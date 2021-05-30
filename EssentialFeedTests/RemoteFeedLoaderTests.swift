@@ -51,7 +51,7 @@ class RemoteFeedLoaderTests: XCTestCase {
     func test_loads_deliversErrorOnConnectionError() {
         let (sut, client) = makeSUT()
         
-        expect(sut: sut, with: .connectivity) {
+        expect(sut: sut, with: .failure(.connectivity)) {
             client.complete(with: NSError(domain: "RemoteFeedLoader", code: 0, userInfo: nil))
         }
     }
@@ -61,7 +61,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         let samples = [199, 201, 300, 400, 403, 404, 500].enumerated()
         samples.forEach { index, statusCode in
-            expect(sut: sut, with: .invalidData) {
+            expect(sut: sut, with: .failure(.invalidData)) {
                 client.complete(withStatusCode: statusCode, at: index)
             }
         }
@@ -70,7 +70,7 @@ class RemoteFeedLoaderTests: XCTestCase {
     func test_load_deliversErrorOn200HTTPResponseWithInvalidJson() {
         let (sut, client) = makeSUT()
         
-        expect(sut: sut, with: .invalidData) {
+        expect(sut: sut, with: .failure(.invalidData)) {
             let invalidJson = Data("invalid data".utf8)
             client.complete(withStatusCode: 200, data: invalidJson)
         }
@@ -81,17 +81,17 @@ class RemoteFeedLoaderTests: XCTestCase {
     
     private func expect(
         sut: RemoteFeedLoader,
-        with error: RemoteFeedLoader.Error,
+        with result: RemoteFeedLoader.Result,
         when action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line) {
         
-        var capturedErrors = [RemoteFeedLoader.Error]()
-        sut.load { error in
-            capturedErrors.append(error)
+        var capturedErrors = [RemoteFeedLoader.Result]()
+        sut.load { result in
+            capturedErrors.append(result)
         }
         action()
-        XCTAssertEqual(capturedErrors, [error], file: file, line: line)
+        XCTAssertEqual(capturedErrors, [result], file: file, line: line)
     }
     
     func makeSUT(url: URL = URL(string: "https://a-url.com")!,
