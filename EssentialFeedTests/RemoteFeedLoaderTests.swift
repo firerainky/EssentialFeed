@@ -76,6 +76,14 @@ class RemoteFeedLoaderTests: XCTestCase {
         }
     }
     
+    func test_load_deliversNoItemsOn200HTTPResponseWithEmptyJsonList() {
+        let (sut, client) = makeSUT()
+        expect(sut: sut, with: .success([])) {
+            let emptyJsonData = Data("{\"items\": []}".utf8)
+            client.complete(withStatusCode: 200, data: emptyJsonData)
+        }
+    }
+    
     
     // MARK: Test Helpers
     
@@ -122,7 +130,7 @@ class RemoteFeedLoaderTests: XCTestCase {
                 httpVersion: nil,
                 headerFields: nil
             )
-            messages[index].completion(.success(response: response!, data: data))
+            messages[index].completion(.success(data: data, response: response!))
         }
     }
 }

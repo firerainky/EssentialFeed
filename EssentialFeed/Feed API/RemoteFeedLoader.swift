@@ -13,7 +13,7 @@ import Foundation
 //}
 
 public enum HTTPClientResult {
-    case success(response: HTTPURLResponse, data: Data)
+    case success(data: Data, response: HTTPURLResponse)
     case failure(Swift.Error)
 }
 
@@ -44,8 +44,12 @@ public class RemoteFeedLoader {
     public func load(completion: @escaping (Result) -> Void) {
         client.get(from: url) { result in
             switch result {
-            case .success(_, _):
-                completion(.failure(.invalidData))
+            case .success(let data, _):
+                if let _ = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) {
+                    completion(.success([]))
+                } else {
+                    completion(.failure(.invalidData))
+                }
             case .failure(_):
                 completion(.failure(.connectivity))
             }
