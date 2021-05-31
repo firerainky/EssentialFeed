@@ -27,7 +27,7 @@ class RemoteFeedLoaderTests: XCTestCase {
     func test_loads_deliversErrorOnConnectionError() {
         let (sut, client) = makeSUT()
         
-        expect(sut: sut, with: .failure(RemoteFeedLoader.Error.connectivity)) {
+        expect(sut: sut, with: failure(.connectivity)) {
             client.complete(with: NSError(domain: "RemoteFeedLoader", code: 0, userInfo: nil))
         }
     }
@@ -38,7 +38,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let samples = [199, 201, 300, 400, 403, 404, 500].enumerated()
         samples.forEach { index, statusCode in
             let jsonData = makeJSONData(for: [])
-            expect(sut: sut, with: .failure(RemoteFeedLoader.Error.invalidData)) {
+            expect(sut: sut, with: failure(.invalidData)) {
                 client.complete(withStatusCode: statusCode, data: jsonData, at: index)
             }
         }
@@ -47,7 +47,7 @@ class RemoteFeedLoaderTests: XCTestCase {
     func test_load_deliversErrorOn200HTTPResponseWithInvalidJson() {
         let (sut, client) = makeSUT()
         
-        expect(sut: sut, with: .failure(RemoteFeedLoader.Error.invalidData)) {
+        expect(sut: sut, with: failure(.invalidData)) {
             let invalidJson = Data("invalid data".utf8)
             client.complete(withStatusCode: 200, data: invalidJson)
         }
@@ -123,7 +123,11 @@ class RemoteFeedLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    func makeSUT(url: URL = URL(string: "https://a-url.com")!,
+    private func failure(_ error: RemoteFeedLoader.Error) -> LoadFeedResult {
+        .failure(error)
+    }
+    
+    private func makeSUT(url: URL = URL(string: "https://a-url.com")!,
                  client: HTTPClientSpy = HTTPClientSpy(),
                  file: StaticString = #filePath,
                  line: UInt = #line
@@ -135,7 +139,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         return (sut, client)
     }
     
-    func checkMemoryLeak(_ obj: AnyObject, file: StaticString, line: UInt) {
+    private func checkMemoryLeak(_ obj: AnyObject, file: StaticString, line: UInt) {
         addTeardownBlock { [weak obj] in
             XCTAssertNil(obj, "Instance should be deallocated. Potential memory leak.", file: file, line: line)
         }
