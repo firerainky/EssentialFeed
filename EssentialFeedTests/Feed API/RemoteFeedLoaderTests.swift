@@ -145,7 +145,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         }
     }
     
-    func makeItem(id: UUID,
+    private func makeItem(id: UUID,
                   description: String? = nil,
                   location: String? = nil,
                   imageURL: URL)
@@ -167,12 +167,12 @@ class RemoteFeedLoaderTests: XCTestCase {
         return (item, json)
     }
     
-    func makeJSONData(for objs: [[String: Any]]) -> Data {
+    private func makeJSONData(for objs: [[String: Any]]) -> Data {
         let json = ["items": objs]
         return try! JSONSerialization.data(withJSONObject: json)
     }
     
-    class HTTPClientSpy: HTTPClient {
+    private class HTTPClientSpy: HTTPClient {
         private var messages = [(url: URL, completion: (HTTPClientResult) -> Void)]()
         var requestedURLs: [URL] {
             messages.map { $0.url }
