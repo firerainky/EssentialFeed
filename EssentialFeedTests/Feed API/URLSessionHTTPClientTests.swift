@@ -9,7 +9,7 @@ import Foundation
 import XCTest
 import EssentialFeed
 
-class URLSeesionHTTPClient: HTTPClient {
+class URLSessionHTTPClient: HTTPClient {
     var session: URLSession
     
     init(session: URLSession = .shared) {
@@ -45,21 +45,18 @@ class URLSeesionHTTPClientTests: XCTestCase {
             exp.fulfill()
         }
         
-        let sut = URLSeesionHTTPClient()
-        sut.get(from: url) { _ in }
+        makeSUT().get(from: url) { _ in }
         wait(for: [exp], timeout: 1.0)
     }
     
     func test_getFromURL_getFailureOnRequestError() {
         let url = URL(string: "https://a-url.com")!
         let error = NSError(domain: "any error", code: 1, userInfo: nil)
-        
         URLProtocolStub.stub(url: url, data: nil, response: nil, error: error)
         
-        let sut = URLSeesionHTTPClient()
         let exp = expectation(description: "Wait for get completion.")
         
-        sut.get(from: url) { result in
+        makeSUT().get(from: url) { result in
             switch result {
             case .failure(let receivedError as NSError):
                 XCTAssertEqual(receivedError.domain, error.domain)
@@ -72,6 +69,12 @@ class URLSeesionHTTPClientTests: XCTestCase {
         }
         
         wait(for: [exp], timeout: 1.0)
+    }
+    
+    // MARK: - Helpers
+    
+    private func makeSUT() -> URLSessionHTTPClient {
+        URLSessionHTTPClient()
     }
     
     class URLProtocolStub: URLProtocol {
