@@ -29,10 +29,10 @@ internal struct FeedItemsMapper {
     
     private static var OK_200: UInt { 200 }
     
-    internal static func map(data: Data, response: HTTPURLResponse) -> LoadFeedResult<RemoteFeedLoader.Error> {
+    internal static func map(data: Data, response: HTTPURLResponse) -> LoadFeedResult {
         guard response.statusCode == OK_200,
               let root = try? JSONDecoder().decode(Root.self, from: data) else {
-            return .failure(.invalidData)
+            return .failure(RemoteFeedLoader.Error.invalidData)
         }
         
         let items = root.items.map { $0.feedItem }
