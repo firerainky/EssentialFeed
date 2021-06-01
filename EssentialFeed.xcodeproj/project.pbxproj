@@ -127,6 +127,7 @@
 				38E6B8832665350500548514 /* Helpers */,
 				38E6B877265E6B8700548514 /* RemoteFeedLoaderTests.swift */,
 				38E6B88126648A7E00548514 /* URLSessionHTTPClientTests.swift */,
+				38E6B8862665E3BE00548514 /* New Group */,
 			);
 			path = "Feed API";
 			sourceTree = "<group>";
@@ -137,6 +138,13 @@
 				38E6B8842665351B00548514 /* XCTCase_MemoryLeakTrackingHelper.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		38E6B8862665E3BE00548514 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
