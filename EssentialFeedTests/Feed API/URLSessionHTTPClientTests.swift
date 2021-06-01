@@ -19,9 +19,11 @@ class URLSessionHTTPClient: HTTPClient {
     private class UnexpectedValuesRepresentation: Error {}
     
     func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void) {
-        session.dataTask(with: url, completionHandler: { _, _, error in
+        session.dataTask(with: url, completionHandler: { data, response, error in
             if let error = error {
                 completion(.failure(error))
+            } else if let data = data, data.count > 0, let response = response as? HTTPURLResponse {
+                completion(.success(data: data, response: response))
             } else {
                 completion(.failure(UnexpectedValuesRepresentation()))
             }
@@ -72,6 +74,31 @@ class URLSeesionHTTPClientTests: XCTestCase {
         XCTAssertNotNil(resultErrorFor(data: anyData(), response: nonHTTPURLResponse(), error: anyNSError()))
         XCTAssertNotNil(resultErrorFor(data: anyData(), response: anyHTTPURLResponse(), error: anyNSError()))
         XCTAssertNotNil(resultErrorFor(data: anyData(), response: nonHTTPURLResponse(), error: nil))
+    }
+    
+    func test_getFromURL_getDataAndResponseOnValidValues() {
+        URLProtocolStub.startInterceptingRequests()
+        
+        let data = anyData()
+        let response = anyHTTPURLResponse()
+        URLProtocolStub.stub(data: data, response: response, error: nil)
+        let sut = URLSessionHTTPClient()
+        let exp = expectation(description: "Wait for get from URL completion.")
+        
+        sut.get(from: anyURL()) { result in
+            switch result {
+            case let .success(data: data, response: response):
+                XCTAssertEqual(data, data)
+                XCTAssertEqual(response, response)
+            default:
+                XCTFail("Expect success result, get \(result) instead")
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+        
+        URLProtocolStub.stopInterceptingRequests()
     }
     
     // MARK: - Helpers
