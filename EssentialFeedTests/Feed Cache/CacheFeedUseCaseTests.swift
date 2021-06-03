@@ -11,8 +11,10 @@ import EssentialFeed
 
 class FeedStore {
     typealias DeletionCompletion = (Error?) -> Void
+    typealias InsertionCompletion = (Error?) -> Void
     
     private var deletionCompletions = [DeletionCompletion]()
+    private var insertionCompletions = [DeletionCompletion]()
     
     enum ReceivedMessage: Equatable {
         case deleteCacheFeed
@@ -34,8 +36,13 @@ class FeedStore {
         deletionCompletions[index](nil)
     }
     
-    func insert(_ items: [FeedItem], time: Date) {
+    func completeInsertion(with error: Error, at index: Int = 0) {
+        insertionCompletions[index](error)
+    }
+    
+    func insert(_ items: [FeedItem], time: Date, completion: @escaping InsertionCompletion) {
         receiveMessages.append(.insert(items: items, timestamp: time))
+        insertionCompletions.append(completion)
     }
 }
 
@@ -50,9 +57,12 @@ class LocalFeedLoader {
     
     func save(_ items: [FeedItem], completion: @escaping (Error?) -> Void) {
         store.deleteCachedFeed { [unowned self] error in
-            completion(error)
             if error == nil {
-                self.store.insert(items, time: currentDate())
+                self.store.insert(items, time: currentDate(), completion: { error in
+                    completion(error)
+                })
+            } else {
+                completion(error)
             }
         }
     }
@@ -109,6 +119,26 @@ class CacheFeedUseCaseTests: XCTestCase {
             exp.fulfill()
         }
         store.completeDeletion(with: error)
+        
+        wait(for: [exp], timeout: 1.0)
+        
+        XCTAssertEqual(receivedError as NSError?, error)
+    }
+    
+    func test_save_failsOnInsertionError() {
+        let items = [uniqueItem(), uniqueItem()]
+        let (sut, store) = makeSUT()
+        
+        let error = anyNSError()
+        var receivedError: Error?
+        let exp = expectation(description: "Wait for save completion.")
+        
+        sut.save(items) { error in
+            receivedError = error
+            exp.fulfill()
+        }
+        store.completeDeletionSuccessfully()
+        store.completeInsertion(with: error)
         
         wait(for: [exp], timeout: 1.0)
         
