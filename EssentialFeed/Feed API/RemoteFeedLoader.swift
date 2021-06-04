@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-
 public class RemoteFeedLoader: FeedLoader {
     
     public typealias Result = LoadFeedResult
