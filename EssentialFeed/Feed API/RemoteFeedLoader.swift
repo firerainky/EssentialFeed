@@ -7,12 +7,9 @@
 
 import Foundation
 
+
+
 public class RemoteFeedLoader: FeedLoader {
-    
-//    public enum Result: Equatable {
-//        case success([FeedItem])
-//        case failure(Error)
-//    }
     
     public typealias Result = LoadFeedResult
     
@@ -31,14 +28,29 @@ public class RemoteFeedLoader: FeedLoader {
     
     public func load(completion: @escaping (LoadFeedResult) -> Void) {
         client.get(from: url) { [weak self] result in
-            guard self != nil else { return }
+            guard let _ = self else { return }
             
             switch result {
             case let .success(data, response):
-                completion(FeedItemsMapper.map(data: data, response: response))
+                completion(RemoteFeedLoader.map(data, from: response))
             case .failure(_):
                 completion(.failure(Error.connectivity))
             }
         }
+    }
+    
+    private static func map(_ data: Data, from response: HTTPURLResponse) -> LoadFeedResult {
+        do {
+            let items = try FeedItemsMapper.map(data: data, response: response)
+            return .success(items.toModels())
+        } catch {
+            return .failure(error)
+        }
+    }
+}
+
+extension Array where Element == RemoteFeedItem {
+    func toModels() -> [FeedItem] {
+        map { FeedItem(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.image) }
     }
 }
