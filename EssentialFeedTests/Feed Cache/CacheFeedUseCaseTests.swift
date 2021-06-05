@@ -5,13 +5,12 @@
 //  Created by Zheng Kanyan on 2021/6/3.
 //
 
-import Foundation
 import XCTest
 import EssentialFeed
 
 class CacheFeedUseCaseTests: XCTestCase {
     
-    func test_init_doesNotDeleteCacheUponCreation() {
+    func test_init_doesNotMessageStoreUponCreation() {
         let (_, store) = makeSUT()
         XCTAssertEqual(store.receiveMessages, [])
     }
