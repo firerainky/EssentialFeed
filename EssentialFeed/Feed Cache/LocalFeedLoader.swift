@@ -48,7 +48,9 @@ public class LocalFeedLoader {
     }
     
     public func validateCache(at index: Int = 0) {
-        store.retrieve(completion: { [unowned self] result in
+        store.retrieve(completion: { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
             case .failure:
                 self.store.deleteCachedFeed(completion: { _ in })
