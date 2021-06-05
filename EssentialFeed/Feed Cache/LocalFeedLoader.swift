@@ -49,8 +49,14 @@ public class LocalFeedLoader {
     }
     
     public func validateCache(at index: Int = 0) {
-        store.retrieve(completion: { [unowned self] _ in
-            self.store.deleteCachedFeed(completion: { _ in })
+        store.retrieve(completion: { [unowned self] result in
+            switch result {
+            case .failure:
+                self.store.deleteCachedFeed(completion: { _ in })
+            default:
+                break
+            }
+            
         })
     }
     
