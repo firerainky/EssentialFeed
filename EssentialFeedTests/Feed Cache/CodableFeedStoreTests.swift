@@ -69,25 +69,14 @@ class CodableFeedStoreTests: XCTestCase {
     
     func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
-        expect(sut, expectedResult: .empty)
+        expect(sut, toRetrieveResult: .empty)
     }
     
     func test_retrieve_hasNoSideEffectsOnEmptyCache() {
         let sut = makeSUT()
         
-        let exp = expectation(description: "Wait for retrieval")
-        sut.retrieve { firstResult in
-            sut.retrieve { secondResult in
-                switch (firstResult, secondResult) {
-                case (.empty, .empty):
-                    break
-                default:
-                    XCTFail("Expected empty result twice , got \(firstResult) and \(secondResult) instead.")
-                }
-                exp.fulfill()
-            }
-        }
-        wait(for: [exp], timeout: 1.0)
+        expect(sut, toRetrieveResult: .empty)
+        expect(sut, toRetrieveResult: .empty)
     }
     
     func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValues() {
@@ -102,35 +91,23 @@ class CodableFeedStoreTests: XCTestCase {
         }
         wait(for: [exp], timeout: 1.0)
         
-        expect(sut, expectedResult: .found(feed: feedLocal, timestamp: currentDate))
+        expect(sut, toRetrieveResult: .found(feed: feedLocal, timestamp: currentDate))
     }
     
     func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
         let sut = makeSUT()
         let feedLocal = uniqueImageFeed().local
         let currentDate = Date()
+        
         let exp = expectation(description: "Wait for retrieval")
         sut.insert(feedLocal, timestamp: currentDate) { error in
             XCTAssertNil(error)
-            
-            sut.retrieve { firstResult in
-                sut.retrieve { secondResult in
-                    switch (firstResult, secondResult) {
-                    case let (.found(feed: firstFeed, timestamp: firstTimestamp),
-                              .found(feed: secondFeed, timestamp: secondTimestamp)):
-                        XCTAssertEqual(firstFeed, feedLocal)
-                        XCTAssertEqual(firstTimestamp, currentDate)
-                        
-                        XCTAssertEqual(secondFeed, feedLocal)
-                        XCTAssertEqual(secondTimestamp, currentDate)
-                    default:
-                        XCTFail("Expected retrieving from non-empty cache to deliver same found result with feed \(feedLocal) and timestamp \(currentDate), got \(firstResult) and \(secondResult) instead.")
-                    }
-                    exp.fulfill()
-                }
-            }
+            exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
+        
+        expect(sut, toRetrieveResult: .found(feed: feedLocal, timestamp: currentDate))
+        expect(sut, toRetrieveResult: .found(feed: feedLocal, timestamp: currentDate))
     }
     
     // MARK: - Helpers
@@ -156,19 +133,19 @@ class CodableFeedStoreTests: XCTestCase {
         try? FileManager.default.removeItem(at: testSpecificStoreURL())
     }
     
-    private func expect(_ sut: CodableFeedStore, expectedResult: RetrievedCacheResult) {
+    private func expect(_ sut: CodableFeedStore, toRetrieveResult: RetrievedCacheResult, file: StaticString = #filePath, line: UInt = #line) {
         
         let exp = expectation(description: "Wait for retrieval")
         
         sut.retrieve { result in
-            switch (result, expectedResult) {
+            switch (result, toRetrieveResult) {
             case (.empty, .empty):
                 break
             case let (.found(feed: receivedFeed, timestamp: receivedTimestamp), .found(feed: expectedFeed, timestamp: expectedTimestamp)):
-                XCTAssertEqual(receivedFeed, expectedFeed)
-                XCTAssertEqual(receivedTimestamp, expectedTimestamp)
+                XCTAssertEqual(receivedFeed, expectedFeed, file: file, line: line)
+                XCTAssertEqual(receivedTimestamp, expectedTimestamp, file: file, line: line)
             default:
-                XCTFail("Expected \(expectedResult), got result instead.")
+                XCTFail("Expected \(toRetrieveResult), got \(result) instead.", file: file, line: line)
             }
             exp.fulfill()
         }
