@@ -5,9 +5,9 @@
 //  Created by Zheng Kanyan on 2021/6/9.
 //
 
-import Foundation
+import XCTest
 
-protocol FeedStoreSpecs  {
+protocol FeedStoreSpecs where Self: XCTestCase  {
     func test_retrieve_deliversEmptyOnEmptyCache()
     func test_retrieve_hasNoSideEffectsOnEmptyCache()
     func test_retrieve_deliversFoundValuesOnNonEmptyCache()
