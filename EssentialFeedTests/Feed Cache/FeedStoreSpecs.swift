@@ -26,8 +26,8 @@ protocol FeedStoreSpecs where Self: XCTestCase  {
 }
 
 protocol FailableRetrieveFeedStoreSpecs: FeedStoreSpecs {
-    func test_retrieve_deliversFailureOnReceivalError()
-    func test_retrieve_hasNoSideEffectsOnReceivalError()
+    func test_retrieve_deliversFailureOnRetrievalError()
+    func test_retrieve_hasNoSideEffectsOnRetrievalError()
 }
 
 protocol FailableInsertFeedStoreSpecs: FeedStoreSpecs {
