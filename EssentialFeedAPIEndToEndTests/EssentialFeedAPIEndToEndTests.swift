@@ -32,7 +32,7 @@ class EssentialFeedAPIEndToEndTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) -> LoadFeedResult? {
+    private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) -> FeedLoader.Result? {
         let url = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
         let client = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
         // The URLSession with default configuration and get josn url without redirect (301 status, which will not trigger cache.)
@@ -42,7 +42,7 @@ class EssentialFeedAPIEndToEndTests: XCTestCase {
         let sut = RemoteFeedLoader(url: url, client: client)
         trackForMemoryLeak(client, file: file, line: line)
         trackForMemoryLeak(sut, file: file, line: line)
-        var receivedResult: LoadFeedResult?
+        var receivedResult: FeedLoader.Result?
         
         let exp = expectation(description: "Wait for load completion.")
         sut.load { result in
