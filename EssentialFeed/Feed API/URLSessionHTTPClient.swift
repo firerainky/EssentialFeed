@@ -16,12 +16,12 @@ public class URLSessionHTTPClient: HTTPClient {
     
     private class UnexpectedValuesRepresentation: Error {}
     
-    public func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void) {
+    public func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
         session.dataTask(with: url, completionHandler: { data, response, error in
             if let error = error {
                 completion(.failure(error))
             } else if let data = data, let response = response as? HTTPURLResponse {
-                completion(.success(data: data, response: response))
+                completion(.success((data: data, response: response)))
             } else {
                 completion(.failure(UnexpectedValuesRepresentation()))
             }
